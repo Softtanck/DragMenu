@@ -170,7 +170,6 @@ public class DragMenu extends FrameLayout {
             if (releasedChild == mContentView) {
                 if (mScrollPositon < isCanScrollPostion / 2) {
                     //关闭
-                    Log.d("Tanck", "state:" + mDragState.ordinal());
                     if (null != listener && mDragLastState.ordinal() != getmDragState()) {
                         listener.OnDragClose();
                     }
@@ -179,7 +178,6 @@ public class DragMenu extends FrameLayout {
                     Close();
                 } else {
                     //展开
-                    Log.d("Tanck", "state:" + mDragState.ordinal());
                     if (null != listener && mDragLastState.ordinal() != getmDragState()) {
                         listener.OnDragOpen();
                     }
