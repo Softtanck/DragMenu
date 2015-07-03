@@ -29,16 +29,15 @@ public class DragMenu extends FrameLayout {
     private int mMenuWidth;//菜单高度
     private int isCanScrollPostion;//可以滚动的距离
     private int mScrollPositon;//当前滚动的位置
-    private DragMenuStateEnum mDragState;//DragMenu状态
-    private DragMenuStateEnum mDragLastState;// DragMenu最后的状态
+    private int mDragState;//DragMenu状态
+    private int mDragLastState;// DragMenu最后的状态
 
     private OnDragMenuStateChangeListener listener;
 
-    public enum DragMenuStateEnum {
-        DRAG,
-        OPEN,
-        CLOSE
-    }
+    public final static int DRAG = 1;
+    public final static int OPEN = 2;
+    public final static int CLOSE = 3;
+
 
     public interface OnDragMenuStateChangeListener {
         void OnDragOpen();
@@ -90,7 +89,9 @@ public class DragMenu extends FrameLayout {
         if (!(getChildAt(0) instanceof ViewGroup) || !(getChildAt(1) instanceof ViewGroup)) {
             throw new IllegalStateException("the child not ViewGroup");
         }
+
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        mDragLastState = mDragState = DRAG;
         mContentView = getChildAt(1);
         mMenuView = getChildAt(0);
         mContentWidth = mContentView.getWidth();
@@ -146,7 +147,7 @@ public class DragMenu extends FrameLayout {
                 if (null != listener) {
                     listener.OnDrag(left);
                 }
-                mDragState = DragMenuStateEnum.DRAG;
+                mDragState = DRAG;
                 mScrollPositon = left;
             }
         }
@@ -170,20 +171,20 @@ public class DragMenu extends FrameLayout {
             if (releasedChild == mContentView) {
                 if (mScrollPositon < isCanScrollPostion / 2) {
                     //关闭
-                    if (null != listener && mDragLastState.ordinal() != getmDragState()) {
+                    Close();
+//                    Log.d("Tanck","state:"+getmDragState());
+                    if (null != listener ){//&& mDragLastState != getmDragState() && getmDragState() != CLOSE) {
+                        Log.d("Tanck","mDragLastState:"+mDragLastState);
                         listener.OnDragClose();
                     }
-                    mDragState = DragMenuStateEnum.CLOSE;
-                    mDragLastState = DragMenuStateEnum.CLOSE;
-                    Close();
+                    mDragState = mDragLastState = CLOSE;
                 } else {
                     //展开
-                    if (null != listener && mDragLastState.ordinal() != getmDragState()) {
+                    Open();
+                    if (null != listener ){//&& mDragLastState != getmDragState() && getmDragState() != OPEN) {
                         listener.OnDragOpen();
                     }
-                    mDragState = DragMenuStateEnum.OPEN;
-                    mDragLastState = DragMenuStateEnum.OPEN;
-                    Open();
+                    mDragState = mDragLastState = OPEN;
                 }
             }
         }
@@ -221,6 +222,6 @@ public class DragMenu extends FrameLayout {
      * @return
      */
     public int getmDragState() {
-        return mDragState.ordinal();
+        return mDragState;
     }
 }
